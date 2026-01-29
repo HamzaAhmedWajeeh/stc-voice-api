@@ -99,7 +99,7 @@ class VoiceCloneDatasetUploadSerializer(serializers.Serializer):
 
 class VoiceCloneCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=256)
-    voice_type = serializers.ChoiceField(choices=["rapid", "rapid_voice", "professional"], required=False, default="professional")
+    voice_type = serializers.ChoiceField(choices=["rapid", "professional"], required=False, default="professional")
     language = serializers.CharField(required=False, default="en-US")
     description = serializers.CharField(required=False, allow_blank=True)
     dataset_url = serializers.URLField(required=False, allow_blank=True)

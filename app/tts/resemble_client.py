@@ -248,12 +248,12 @@ def _normalize_voice_design_generate_response(raw: Dict[str, Any]) -> Dict[str, 
 # -------- Voice Cloning --------
 def _normalize_voice_type(v: str) -> str:
     """
-    Accepts: rapid, rapid_voice, professional
+    Accepts: rapid, professional
     Returns the correct value for Resemble.
     """
     vv = (v or "").strip().lower()
     if vv in ("rapid", "rapid_voice", "rapid-voice"):
-        return "rapid_voice"
+        return "rapid"
     return "professional"
 
 def resemble_create_custom_voice(payload: Dict[str, Any]) -> Dict[str, Any]:
