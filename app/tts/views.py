@@ -94,16 +94,39 @@ class StreamSynthesizeView(APIView):
 class VoicesListProxyView(APIView):
     """
     Proxies Resemble voice listing (GET /api/v2/voices)
-    Supports ONLY: page, page_size, advanced (per docs)
+
+    Supports: page, page_size, advanced
+    - GET: reads from query params
+    - POST: reads from JSON body (kept for FE compatibility)
     """
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = VoicesListQuerySerializer
 
-    def post(self, request):
-        ser = VoicesListQuerySerializer(data=request.query_params)
+    def _validated_params(self, request):
+        raw = request.query_params if request.method == "GET" else request.data
+
+        if request.method != "GET" and not raw:
+            raw = request.query_params
+
+        data = dict(raw)
+
+        if "advanced" not in data:
+            data["advanced"] = True
+
+        if "page_size" not in data:
+            data["page_size"] = 1000
+
+        ser = VoicesListQuerySerializer(data=data)
         ser.is_valid(raise_exception=True)
-        data = resemble_list_voices(ser.validated_data)
+        return ser.validated_data
+
+    def get(self, request):
+        params = self._validated_params(request)
+        data = resemble_list_voices(params)
         return Response(data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        return self.get(request)
     
 
 # ---------- Presets CRUD ----------
